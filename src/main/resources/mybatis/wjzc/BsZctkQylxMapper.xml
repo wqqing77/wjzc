@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsZctkQylxMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsZctkQylx" id="BsZctkQylxResult">
+        <id property="id" column="id"/>
+
+        <result property="zctkId" column="zctk_id"/>
+        <result property="qylxCode" column="qylx_code"/>
+        <result property="qylx" column="qylx"/>
+
+    </resultMap>
+
+    <sql id="baseSelect">
+        select zctk_id, qylx_code, qylx from bs_zctk_qylx
+    </sql>
+
+    <select id="selectBsZctkQylxById" parameterType="com.wjzc.project.biz.domain.BsZctkQylx" resultMap="BsZctkQylxResult">
+        select * from bs_zctk_qylx where zctk_id = #{zctkId}
+    </select>
+
+    <select id="selectBsZctkQylxByZctkId" parameterType="com.wjzc.project.biz.domain.BsZctkQylx" resultMap="BsZctkQylxResult">
+        select id,concat(qylx_code,'-',qylx) as qylx from bs_zctk_qylx where zctk_id = #{zctkId}
+    </select>
+
+    <insert id="insertZctkQylx" parameterType="com.wjzc.project.biz.domain.BsZctkQylx">
+        insert into bs_zctk_qylx(
+        <if test="zctkId != null and zctkId != ''">zctk_id,</if>
+        <if test="qylxCode != null and qylxCode != ''">qylx_code,</if>
+        <if test="qylx != null and qylx != '' ">qylx</if>
+        )values(
+        <if test="zctkId != null and zctkId != ''">#{zctkId},</if>
+        <if test="qylxCode != null and qylxCode != ''">#{qylxCode},</if>
+        <if test="qylx != null and qylx != ''">#{qylx}</if>
+        )
+    </insert>
+
+    <delete id="deleteWjzcQylxById" parameterType="Long">
+ 			delete from bs_zctk_qylx where zctk_id = #{zctkId}
+ 	</delete>
+
+</mapper> 

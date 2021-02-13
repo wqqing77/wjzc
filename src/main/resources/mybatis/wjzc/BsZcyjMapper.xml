@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsZcyjMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsZcyj" id="BsZcyjResult">
+        <id property="id" column="id"/>
+
+        <result property="zctkId" column="zctk_id"/>
+        <result property="zcyj" column="zcyj"/>
+        <result property="zcyjurl" column="zcyjurl"/>
+
+    </resultMap>
+
+    <sql id="baseSelect">
+        select zctk_id, zcyj, zcyjurl from bs_zcyj
+    </sql>
+
+    <select id="selectBsZcyjById" parameterType="com.wjzc.project.biz.domain.BsZcyj" resultMap="BsZcyjResult">
+        select * from bs_zcyj where zctk_id = #{id}
+    </select>
+
+    <insert id="insertBsZcyj" parameterType="com.wjzc.project.biz.domain.BsZcyj">
+        insert into bs_zcyj(zctk_id,zcyj,zcyjurl
+        )values(#{zctkId},#{zcyj},#{zcyjurl}
+        )
+    </insert>
+
+    <delete id="deleteBsZcyjById" parameterType="Long">
+ 			delete from bs_zcyj where zctk_id = #{id}
+ 	</delete>
+
+</mapper> 

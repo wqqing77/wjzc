@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsLybMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsLyb" id="BsLybResult">
+        <id property="id" column="id"/>
+
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="content" column="content"/>
+        <result property="anonymous" column="anonymous"/>
+
+    </resultMap>
+
+    <select id="selectBsLybById" parameterType="com.wjzc.project.biz.domain.BsLyb" resultMap="BsLybResult">
+        select * from bs_lyb where id = #{id}
+    </select>
+
+    <select id="selectBsLybNum" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickslyb FROM bs_lyb
+    </select>
+
+    <select id="selectBsLybList" parameterType="com.wjzc.project.biz.domain.BsLyb" resultMap="BsLybResult">
+        select a.* from bs_lyb a
+        <where>
+            <if test="name != null and name != ''">
+                a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND a.phone like concat('%', #{phone}, '%')
+            </if>
+            <if test="content != null and content != ''">
+                AND a.content like concat('%', #{content}, '%')
+            </if>
+            <if test="anonymous != null">
+                AND a.anonymous = #{anonymous}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteBsLybById" parameterType="Long">
+ 			delete from bs_lyb where id = #{id}
+ 	</delete>
+
+</mapper> 

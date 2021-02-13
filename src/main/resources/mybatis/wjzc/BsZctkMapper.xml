@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsZctkMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsZctk" id="BsZctkResult">
+        <id property="id" column="id"/>
+
+        <result property="xh" column="xh"/>
+        <result property="wjlx" column="wjlx"/>
+        <result property="zclx" column="zclx"/>
+        <result property="zctk" column="zctk"/>
+        <result property="sydx" column="sydx"/>
+        <result property="zcsx" column="zcsx"/>
+        <result property="zxdh" column="zxdh"/>
+        <result property="bllc" column="bllc"/>
+        <result property="bldw" column="bldw"/>
+        <result property="dyzc" column="dyzc"/>
+        <result property="tbbm" column="tbbm"/>
+        <result property="wjlxCode" column="wjlx_code"/>
+        <result property="zclxCode" column="zclx_code"/>
+        <result property="zctkShort" column="zctk_short"/>
+        <collection property="blrkList" ofType="com.wjzc.project.biz.domain.BsBlrk" column="id">
+            <result property="blrk" column="blrk"/>
+            <result property="blrkurl" column="blrkurl"/>
+        </collection>
+        <collection property="zcyjList" ofType="com.wjzc.project.biz.domain.BsZcyj" column="id">
+            <result property="zcyj" column="zcyj"/>
+            <result property="zcyjurl" column="zcyjurl"/>
+        </collection>
+
+    </resultMap>
+
+    <resultMap type="com.wjzc.project.biz.domain.BsZctk" id="BsZctkResult2">
+        <id property="id" column="id"/>
+        <result property="zctk" column="zctk"/>
+        <result property="clickTimes" column="click_times"/>
+    </resultMap>
+
+    <sql id="baseSelect">
+        select wjlx, zclx, zctk,sydx,zcsx,bllc,bldw,wjlx_code,zclx_code,zctk_short from bs_zctk
+    </sql>
+
+    <select id="selectBsZctkRaddarList" resultType="java.util.Map">
+        SELECT count(*) as `value`,wjlx as `name` FROM bs_zctk GROUP BY wjlx
+    </select>
+
+    <select id="selectBsZctkPieList" resultType="java.util.Map">
+        SELECT
+            count(*) as `value`,
+            b.zclx as `name`
+        FROM
+            bs_zctk_log a
+            INNER JOIN bs_zctk b ON a.zctk_id = b.id
+        GROUP BY
+            b.zclx_code
+        ORDER BY
+            click_time ASC
+    </select>
+
+    <select id="selectBsZctkBarList" resultType="java.util.Map">
+        SELECT
+            count(*) as zctknum,
+            b.wjlx,
+            date_format( click_time, '%Y-%m-%d' ) as zctknumtime
+        FROM
+            bs_zctk_log a
+            INNER JOIN bs_zctk b ON a.zctk_id = b.id and a.click_time &gt;= DATE_ADD(CURRENT_DATE,INTERVAL -7 DAY)
+        GROUP BY
+            b.wjlx_code,
+            date_format( click_time, '%Y-%m-%d' )
+        ORDER BY
+            click_time ASC
+    </select>
+
+    <select id="selectBsZctkList" parameterType="com.wjzc.project.biz.domain.BsZctk" resultMap="BsZctkResult">
+        SELECT a.* FROM
+        (select @rownum:=@rownum+1 AS xh,c.* from (SELECT @rownum:=0) r,bs_zctk c) a
+        LEFT JOIN sys_area_zctk b on a.id = b.zctk_id
+        <where>
+            <if test="wjlx != null and wjlx != ''">
+                a.wjlx like concat('%', #{wjlx}, '%')
+            </if>
+            <if test="zclx != null and zclx != ''">
+                AND a.zclx like concat('%', #{zclx}, '%')
+            </if>
+            <if test="zctk != null and zctk != ''">
+                AND a.zctk like concat('%', #{zctk}, '%')
+            </if>
+            <if test="areaCode != null and areaCode != ''">
+                AND b.area_code = #{areaCode}
+            </if>
+        </where>
+        GROUP BY a.id
+    </select>
+
+    <select id="selectBsZctkMaxId" parameterType="com.wjzc.project.biz.domain.BsZctk" resultMap="BsZctkResult">
+        select MAX(id) as id FROM bs_zctk
+    </select>
+
+    <insert id="insertZctk" parameterType="com.wjzc.project.biz.domain.BsZctk">
+        insert into bs_zctk(wjlx,zclx,zctk,sydx,zcsx,bllc,bldw,zxdh,wjlx_code,zclx_code,zctk_short,dyzc,tbbm
+        )values(#{wjlx},#{zclx},#{zctk},#{sydx},#{zcsx},#{bllc},#{bldw},#{zxdh},#{wjlxCode},#{zclxCode},#{zctkShort},#{dyzc},#{tbbm}
+        )
+    </insert>
+
+    <update id="updateWjzc" parameterType="com.wjzc.project.biz.domain.BsZctk">
+        update bs_zctk
+        <set>
+            <if test="wjlx != null and wjlx != '' ">wjlx = #{wjlx},</if>
+            <if test="zclx != null and zclx != ''">zclx = #{zclx},</if>
+            <if test="zctk != null and zctk != ''">zctk = #{zctk},</if>
+            <if test="sydx != null and sydx != ''">sydx = #{sydx},</if>
+            <if test="zcsx != null and zcsx != ''">zcsx = #{zcsx},</if>
+            <if test="bllc != null and bllc != ''">bllc = #{bllc},</if>
+            <if test="bldw != null and bldw != ''">bldw = #{bldw},</if>
+            <if test="zxdh != null and zxdh != ''">zxdh = #{zxdh},</if>
+            <if test="wjlxCode != null and wjlxCode != ''">wjlx_code = #{wjlxCode},</if>
+            <if test="zclxCode != null and zclxCode != ''">zclx_code = #{zclxCode},</if>
+            <if test="zctkShort != null and zctkShort != ''">zctk_short = #{zctkShort},</if>
+            <if test="dyzc != null and dyzc != ''">dyzc = #{dyzc},</if>
+            <if test="tbbm != null and dyzc != ''">tbbm = #{tbbm}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWjzcById" parameterType="Long">
+ 		delete from bs_zctk where id = #{id}
+ 	</delete>
+
+    <select id="selectBsZctkNum" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as zctknum FROM bs_zctk
+    </select>
+
+    <select id="selectBsZctkById" parameterType="java.lang.Long" resultMap="BsZctkResult" >
+        SELECT * FROM bs_zctk where id = #{id}
+    </select>
+
+    <select id="selectZctkById" parameterType="java.lang.Long" resultMap="BsZctkResult">
+        SELECT
+	      x.*,y.blrk,y.blrkurl,z.zcyj,z.zcyjurl
+        FROM
+            bs_zctk x
+            left JOIN bs_blrk y ON x.id = y.zctk_id
+            left JOIN bs_zcyj z ON x.id = z.zctk_id
+        where x.id=#{_parameter}
+
+    </select>
+
+
+
+    <select id="selectZctkList" parameterType="java.util.Map" resultType="java.util.Map">
+
+        SELECT
+        x.id,x.zctk,case when y.click_times is null then 0 else y.click_times end click_times
+        FROM
+        bs_zctk x left join (select *,count(*) click_times from bs_zctk_log group by zctk_id) y on x.id=y.zctk_id
+        left join sys_dict_data c on x.zclx_code=c.dict_value and c.dict_type='zclx'
+        <where>
+            <if test="type == 'wjlx'">
+                x.wjlx_code = #{value} order by c.dict_sort asc
+            </if>
+            <if test="type == 'zclx'">
+                x.zclx_code = #{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectZctkList2" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+	      x.id,x.zctk,case when y.click_times is null then 0 else y.click_times end click_times
+        FROM
+            (select * from bs_zctk where id in (select zctk_id from bs_zctk_qylx where qylx_code=#{qylx})) x left join (select *,count(*) click_times from bs_zctk_log group by zctk_id) y on x.id=y.zctk_id
+        where x.zclx_code=#{zclx}
+
+    </select>
+
+    <select id="selectZclxByQylx" parameterType="java.lang.String" resultType="java.util.Map">
+       select bz.zclx,bz.zclx_code
+        from bs_zctk bz
+        left join sys_area_zctk saz
+        on saz.zctk_id=bz.id
+        left join bs_zctk_qylx bzq
+        on bzq.zctk_id=bz.id
+        where bzq.qylx_code=#{qylx}
+        and saz.area_code=#{areaCode}
+        group by bz.zclx
+    </select>
+
+
+    <select id="selectByWjlxAndZctk" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        x.id,x.zctk,case when y.click_times is null then 0 else y.click_times end click_times
+        FROM
+        bs_zctk  x left join (select *,count(*) click_times from bs_zctk_log group by zctk_id) y on x.id=y.zctk_id
+        left join sys_dict_data c on x.zclx_code=c.dict_value and c.dict_type='zclx'
+        left join sys_area_zctk saz on saz.zctk_id=x.id
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and x.zctk like concat('%',#{keyWord},'%')
+            </if>
+            <if test="areaCode != null and areaCode != ''">
+                and saz.area_code = #{areaCode}
+            </if>
+            <if test="wjlx != null and wjlx != ''">
+                and x.wjlx_code=#{wjlx}  order by c.dict_sort asc
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByQylxAndZctk" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        x.id,x.zctk,case when y.click_times is null then 0 else y.click_times end click_times
+        FROM
+        (select * from bs_zctk
+        <if test="qylx != null and qylx != ''">
+            where id in (select zctk_id from bs_zctk_qylx where qylx_code=#{qylx})
+        </if>
+        ) x left join (select *,count(*) click_times from bs_zctk_log group by zctk_id) y on x.id=y.zctk_id
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                x.zctk like concat('%',#{keyWord},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="search2" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT
+        x.id,x.zctk,case when y.click_times is null then 0 else y.click_times end click_times
+        FROM
+        bs_zctk  x left join (select *,count(*) click_times from bs_zctk_log group by zctk_id) y on x.id=y.zctk_id
+        left join sys_area_zctk saz on saz.zctk_id=x.id
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and x.zctk like concat('%',#{keyWord},'%')
+            </if>
+            <if test="areaCode != null and areaCode != ''">
+                and saz.area_code = #{areaCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="search" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT
+        x.id,x.zctk,case when y.click_times is null then 0 else y.click_times end click_times
+        FROM
+        bs_zctk  x left join (select *,count(*) click_times from bs_zctk_log group by zctk_id) y on x.id=y.zctk_id
+        <where>
+            <if test="_parameter != null and _parameter != ''">
+                and x.zctk like concat('%',#{_parameter},'%')
+            </if>
+        </where>
+    </select>
+</mapper> 

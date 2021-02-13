@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsAreaZctkMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsAreaZctk" id="BsAreaZctkResult">
+        <id property="id" column="id"/>
+
+        <result property="zctkId" column="zctk_id"/>
+        <result property="areaCode" column="area_code"/>
+        <result property="areaName" column="area_name"/>
+
+    </resultMap>
+
+    <sql id="baseSelect">
+        select zctk_id, area_code from sys_area_zctk
+    </sql>
+
+    <select id="selectSysAreaZctkById" parameterType="com.wjzc.project.biz.domain.BsAreaZctk" resultMap="BsAreaZctkResult">
+        select id,concat(area_code,'-',area_name) as cityname from sys_area_zctk where zctk_id = #{zctkId}
+    </select>
+
+    <insert id="insertSysAreaZctk" parameterType="com.wjzc.project.biz.domain.BsAreaZctk">
+        insert into sys_area_zctk(
+        <if test="zctkId != null and zctkId != ''">zctk_id,</if>
+        <if test="areaCode != null and areaCode != ''">area_code,</if>
+        <if test="areaName != null and areaName != ''">area_name</if>
+        )values(
+        <if test="zctkId != null and zctkId != ''">#{zctkId},</if>
+        <if test="areaCode != null and areaCode != ''">#{areaCode},</if>
+        <if test="areaName != null and areaName != ''">#{areaName}</if>
+        )
+    </insert>
+
+    <delete id="deleteSysAreaZctkById" parameterType="Long">
+ 			delete from sys_area_zctk where zctk_id = #{zctkId}
+ 	</delete>
+
+</mapper> 

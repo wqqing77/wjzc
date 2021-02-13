@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsBlrkMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsBlrk" id="BsBlrkResult">
+        <id property="id" column="id"/>
+
+        <result property="zctkId" column="zctk_id"/>
+        <result property="blrk" column="blrk"/>
+        <result property="blrkurl" column="blrkurl"/>
+
+    </resultMap>
+
+    <sql id="baseSelect">
+        select zctk_id, blrk, blrkurl from bs_blrk
+    </sql>
+
+    <select id="selectBsBlrkById" parameterType="com.wjzc.project.biz.domain.BsBlrk" resultMap="BsBlrkResult">
+        select * from bs_blrk where zctk_id = #{id}
+    </select>
+
+    <select id="selectBsBlrkZctkId" parameterType="com.wjzc.project.biz.domain.BsBlrk" resultMap="BsBlrkResult">
+        select id,concat(qylx_code,'-',qylx) as qylx from bs_zctk_qylx where zctk_id = #{zctkId}
+    </select>
+
+    <insert id="insertBsBlrk" parameterType="com.wjzc.project.biz.domain.BsBlrk">
+        insert into bs_blrk(zctk_id,blrk,blrkurl
+        )values(#{zctkId},#{blrk},#{blrkurl}
+        )
+    </insert>
+
+    <delete id="deleteBsBlrksById" parameterType="Long">
+ 			delete from bs_blrk where zctk_id = #{id}
+ 	</delete>
+
+</mapper> 

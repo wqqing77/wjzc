@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjzc.project.biz.mapper.BsZctkLogMapper">
+
+    <resultMap type="com.wjzc.project.biz.domain.BsZctkLog" id="BsZctkLogResult">
+        <id property="id" column="id"/>
+
+        <result property="zctkId" column="zctk_id"/>
+        <result property="clickTime" column="click_time"/>
+        <result property="areaCode" column="area_code"/>
+
+    </resultMap>
+
+    <select id="selectBsZctkLogToDay" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickstoday FROM bs_zctk_log WHERE TO_DAYS(click_time) = TO_DAYS(now())
+    </select>
+
+    <select id="selectBsZctkLogCum" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log
+    </select>
+
+    <select id="selectBsZctkLogJinH" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330700000000'
+    </select>
+
+    <select id="selectBsZctkLogWuC" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330702000000'
+    </select>
+
+    <select id="selectBsZctkLogJinD" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330703000000'
+    </select>
+
+    <select id="selectBsZctkLogWuY" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330723000000'
+    </select>
+
+    <select id="selectBsZctkLogPuJ" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330726000000'
+    </select>
+
+    <select id="selectBsZctkLogBanA" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330727000000'
+    </select>
+
+    <select id="selectBsZctkLogLanX" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330781000000'
+    </select>
+
+    <select id="selectBsZctkLogYiW" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330782000000'
+    </select>
+
+    <select id="selectBsZctkLogDongY" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330783000000'
+    </select>
+
+    <select id="selectBsZctkLogYongK" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330784000000'
+    </select>
+
+    <select id="selectBsZctkLogKaiFaQ" resultType="java.lang.Integer">
+        select IF(count(*)=NULL,'0',count(*)) as clickscum FROM bs_zctk_log where area_code = '330704000000'
+    </select>
+
+    <select id="selectBsZctkClickList" parameterType="com.wjzc.project.biz.domain.BsZctkLog" resultMap="BsZctkLogResult">
+        SELECT * FROM
+        (select left(click_time,10) as clitime,count(*) as clicksdata from bs_zctk_log where DATE_SUB(CURDATE(), INTERVAL 365 DAY) &lt;= date(click_time) GROUP BY TO_DAYS(click_time) ORDER BY clitime  DESC LIMIT 7) a
+        ORDER BY a.clitime ASC
+    </select>
+
+
+
+</mapper> 
